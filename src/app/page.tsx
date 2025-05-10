@@ -3,6 +3,7 @@ import { Button } from "@/components/Button/Button";
 import { TextInput } from "@/components/TextInput/TextInput";
 import PartecipantsList from "@/UI/PartecipantsList/PartecipantsList";
 import NewPartecipant from "@/UI/NewPartecipant/NewPartecipant";
+import { PickPartecipant } from "@/UI/PickPartecipant/PickPartecipant";
 
 
 const Home = async () => {
@@ -11,6 +12,7 @@ const Home = async () => {
       <main className="grid grid-cols-[auto_1fr] gap-50 overflow-hidden">
         <div className="flex flex-col gap-[32px] items-center sm:items-start overflow-hidden">
           <NewPartecipant />
+          <PickPartecipant />
         </div>
         <PartecipantsList />
       </main>

@@ -1,25 +1,30 @@
 "use client"; // Questo è un componente client
 
-import { useEffect, useState } from "react";
-import { List, Partecipant } from "@/components/List/List";
+import { List, Partecipant } from '@/components/List/List';
+import { useQuery } from '@tanstack/react-query';
+
+// Function to fetch participants
+const fetchParticipants = async () => {
+  const res = await fetch('/api/partecipants');
+  if (!res.ok) {
+    throw new Error('Failed to fetch participants');
+  }
+  return res.json(); // Return the parsed data
+};
 
 export default function PartecipantsList() {
-  const [partecipants, setPartecipants] = useState<Partecipant[]>([]);
-  const [loading, setLoading] = useState(false);
+  // Use React Query's useQuery hook to fetch data
+  const { data: participants, isLoading, isError, error } = useQuery<Partecipant[], Error>(
+    {queryKey: ["partecipants"], queryFn: fetchParticipants}, 
+  );
 
-  const fetchPosts = async () => {
-    setLoading(true);
-    const res = await fetch("/api/partecipants");
-    const data = await res.json();
-    setPartecipants(data);
-    setLoading(false);
-  };
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
 
-  useEffect(() => {
-    fetchPosts();
-  }, []);
+  if (isError) {
+    return <div>Error: {error?.message}</div>;
+  }
 
-  
-
-  return <List items={partecipants} />;
+  return <List items={participants ?? []} />;
 }

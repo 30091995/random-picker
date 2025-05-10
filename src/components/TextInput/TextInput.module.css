@@ -7,3 +7,8 @@
   font-size: 1.143rem;
   color: black;
 }
+
+.textInputWrapper{
+    background-color: white;
+    border-radius: 6px;
+  }

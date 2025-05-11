@@ -4,7 +4,7 @@ import { GridList, GridListItem } from "react-aria-components";
 
 export interface Partecipant {
   id: string;
-  fullName: string;
+  fullName: string | undefined;
 }
 
 interface ListProps {

@@ -1,33 +1,46 @@
 "use client";
-import { Button } from "@/components/Button/Button";
-import { Partecipant } from "@/components/List/List";
-import { useMutation } from "@tanstack/react-query";
 
-const fetchRandom = async () => {
-  const res = await fetch("/api/random");
-  if (!res.ok) {
-    throw new Error("Failed to fetch random");
-  }
-  return res.json(); // Return the parsed data
-};
+import { useState, useTransition } from "react";
+import { Button } from "@/components/Button/Button";
+import { getRandomParticipant } from "@/app/actions/pick-random";
 
 export const PickPartecipant = () => {
-  const {
-    mutate: getRandomParticipant,
-    data: randomPartecipant,
-    isPending,
-  } = useMutation<Partecipant, Error>({
-    mutationFn: fetchRandom,
-  });
+  const [randomParticipants, setRandomParticipants] = useState<string[]>([]);
+  const [error, setError] = useState<string | null>(null);
+  const [isPending, startTransition] = useTransition();
 
-  if (isPending) {
-    return <div>Loading...</div>;
-  }
+  const handlePickRandom = () => {
+    setError(null);
+
+    startTransition(async () => {
+      try {
+        const response = await getRandomParticipant();
+        if (!response) {
+          setError("No participants found");
+        } else {
+          setRandomParticipants((prevState) => [
+            ...prevState,
+            response.fullName,
+          ]);
+        }
+      } catch (err) {
+        setError("An error occurred while fetching the participant.");
+      }
+    });
+  };
 
   return (
     <div className="grid gap-4 grid-cols-2">
-      <Button label="Estrai random" onClick={getRandomParticipant} />
-      {randomPartecipant && <span>{randomPartecipant.fullName}</span>}
+      <Button
+        label={isPending ? "Loading..." : "Estrai random"}
+        onClick={handlePickRandom}
+      />
+
+      {error && <span className="text-red-500">{error}</span>}
+
+      <h3>Partecipanti estratti</h3>
+      {randomParticipants.length > 0 &&
+        randomParticipants.map((partecipant, index) => <span key={index}>{partecipant}</span>)}
     </div>
   );
 };

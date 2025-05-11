@@ -6,17 +6,15 @@ import { getRandomParticipant } from "@/app/actions/pick-random";
 
 export const PickPartecipant = () => {
   const [randomParticipants, setRandomParticipants] = useState<string[]>([]);
-  const [error, setError] = useState<string | null>(null);
+
   const [isPending, startTransition] = useTransition();
 
   const handlePickRandom = () => {
-    setError(null);
-
     startTransition(async () => {
       try {
         const response = await getRandomParticipant();
         if (!response) {
-          setError("No participants found");
+          console.log("No participants found");
         } else {
           setRandomParticipants((prevState) => [
             ...prevState,
@@ -24,23 +22,26 @@ export const PickPartecipant = () => {
           ]);
         }
       } catch (err) {
-        setError("An error occurred while fetching the participant.");
+        console.log("An error occurred while fetching the participant.");
       }
     });
   };
 
   return (
-    <div className="grid gap-4 grid-cols-2">
+    <div className="grid gap-4">
       <Button
         label={isPending ? "Loading..." : "Estrai random"}
         onClick={handlePickRandom}
+        className="justify-self-start"
       />
-
-      {error && <span className="text-red-500">{error}</span>}
-
-      <h3>Partecipanti estratti</h3>
-      {randomParticipants.length > 0 &&
-        randomParticipants.map((partecipant, index) => <span key={index}>{partecipant}</span>)}
+      <div className="flex flex-col">
+        {randomParticipants.length > 0 &&
+          randomParticipants.map((partecipant, index) => (
+            <span
+              key={index}
+            >{`${partecipant} -> (escluso dalle prossime estrazioni)`}</span>
+          ))}
+      </div>
     </div>
   );
 };

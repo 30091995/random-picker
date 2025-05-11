@@ -26,9 +26,9 @@ export default function NewPartecipant() {
   };
 
   return (
-    <>
+    <div className="flex gap-4">
       <TextInput value={partecipant} onChange={setPartecipant} />
-      <Button label={isPending ? "Aggiungendo alla lista..." :"Nuovo partecipante"} onClick={handleClick} />
-    </>
+      <Button label={isPending ? "Aggiungendo alla lista..." : "Aggiungi partecipante"} onClick={handleClick} />
+    </div>
   );
 }
